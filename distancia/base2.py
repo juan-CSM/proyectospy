@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import distancia as miprog
 import numpy as np
 import matplotlib
 matplotlib.use('TkAgg')
@@ -11,6 +12,9 @@ import tkinter as Tk
 import sys
 from matplotlib import style
 style.use('fivethirtyeight')
+from mpl_toolkits.mplot3d import Axes3D
+
+
 
 def infoprog():
     informacionPrograma = 'Programa que busca el punto medio entre 2 puntos)'
@@ -49,15 +53,19 @@ pz = Tk.DoubleVar()
 
 f = plt.Figure(figsize=(6,4))
 def grafica():
-    x1, y1 = p1x.get(), p1y.get()
-    x2, y2 = p2x.get(), p2y.get()
-    x0, y0 = px.get(), py.get()
-    pf = [[x1,y1],[x2,y2]]
-    pt = [x0,y0]
-    ax = f.add_subplot(111)
-    for i in pf:
-        ax.plot([i[0],pt[0]],[i[1],pt[1]],'ro-')
-    ax.set_title("Hola")
+    x1, y1, z1 = p1x.get(), p1y.get(), p1z.get()
+    x2, y2, z2 = p2x.get(), p2y.get(), p2z.get()
+    x0, y0, z0 = px.get(), py.get(), pz.get()
+    a = np.array([x1,y1,z1])
+    b = np.array([x2,y2,z2])
+    c = np.array([x0,y0,z0])
+    ax = f.add_subplot(111, projection = '3d')
+    vectores = miprog.findpm(a,b,c)
+    respmedio = vectores[3]
+    mostrarResultado.configure(text = str(respmedio))
+    for i in vectores:
+        ax.scatter(i[0],i[1],i[2])
+    ax.set_title("Punto medio")
     canvas.draw()
 
 def borra():
@@ -65,28 +73,41 @@ def borra():
     entradaX0.insert(0,0)
     entradaY0.delete(0,Tk.END)
     entradaY0.insert(0,0)
+    entradaZ0.delete(0,Tk.END)
+    entradaZ0.insert(0,0)
     entradaX1.delete(0,Tk.END)
     entradaX1.insert(0,0)
     entradaY1.delete(0,Tk.END)
     entradaY1.insert(0,0)
+    entradaZ1.delete(0,Tk.END)
+    entradaZ1.insert(0,0)
     entradaX2.delete(0,Tk.END)
     entradaX2.insert(0,0)
     entradaY2.delete(0,Tk.END)
     entradaY2.insert(0,0)
+    entradaZ2.delete(0,Tk.END)
+    entradaZ2.insert(0,0)
+    mostrarResultado.configure(text = '')
 
 def pordef():
     entradaX0.delete(0,Tk.END)
     entradaX0.insert(0,1)
     entradaY0.delete(0,Tk.END)
     entradaY0.insert(0,1)
+    entradaZ0.delete(0,Tk.END)
+    entradaZ0.insert(0,0)
     entradaX1.delete(0,Tk.END)
     entradaX1.insert(0,0)
     entradaY1.delete(0,Tk.END)
     entradaY1.insert(0,0)
+    entradaZ1.delete(0,Tk.END)
+    entradaZ1.insert(0,0)
     entradaX2.delete(0,Tk.END)
     entradaX2.insert(0,2)
     entradaY2.delete(0,Tk.END)
     entradaY2.insert(0,0)
+    entradaZ2.delete(0,Tk.END)
+    entradaZ2.insert(0,0)
 
 # a tk.DrawingArea
 canvas = FigureCanvasTkAgg(f, master=root)
@@ -171,5 +192,8 @@ buttonBorra.place(x = 190, y = 580)
 
 buttonPordef = Tk.Button(master = root, text = 'default', command=pordef)
 buttonPordef.place(x = 280, y = 580)
+
+mostrarResultado = Tk.Label(root, text = '')
+mostrarResultado.place(x = 400, y = 580)
 
 Tk.mainloop()
